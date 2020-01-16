@@ -5,10 +5,25 @@ class Node:
     self.value = value
     self.left = None
     self.right = None
+    self.count = 1
 
 class BST:
   def __init__(self):
     self.root = None
+
+  def computeSize(self, node, count = 0):
+    if node:
+      count = 1
+      if node.left:
+        count += self.size(node.left, count)
+      if node.right:
+        count += self.size(node.right, count)
+    return count
+
+  def getCount(self, node):
+    if node:
+      return node.count
+    return 0
 
   def insert(self, value):
     if self.root == None:
@@ -16,7 +31,7 @@ class BST:
     else:
       self.__insert(self.root, value)
 
-  def __insert(self, node, value):
+  def __insert(self, node, value): 
     if value < node.value:
       if node.left is None:
         node.left = Node(value)
@@ -27,7 +42,12 @@ class BST:
         node.right = Node(value)
       else:
         self.__insert(node.right, value)
+    else:
+      node.value = value
+    node.count =  1 + self.getCount(node.left) + self.getCount(node.right)
+    return node
 
+  # aka LNR
   def inOrderTraversal(self):
     print("traverse tree in order (smallest to largest node)")
     self.__inOrderTraversal(self.root)
@@ -49,13 +69,37 @@ class BST:
       currentNode = current[0]
       currentLevel = current[1]
 
-      print(f'node:{currentNode.value} level:{currentLevel}')
+      print(f'node:{currentNode.value} level:{currentLevel} count:{currentNode.count}')
 
       level = currentLevel + 1
       if currentNode.left:
         nodeQueue.put((currentNode.left, level))
       if currentNode.right:
         nodeQueue.put((currentNode.right, level))
+
+  def delete(self, value):
+    self.__delete(self.root, value)
+
+  def __delete(self, node, value):
+    if node == None:
+      return
+    if value < node.value:
+      node.left = self.__delete(node.left, value)
+    elif value > node.value:
+      node.right = self.__delete(node.right, value)
+    else:
+      if not node.left:
+        temp = node.right
+        node = None
+        return temp
+      if not node.right:
+        temp = node.left
+        node = None
+        return temp
+      ceiling = self.__min(node.right)
+      node.value = ceiling.value
+      node.right = self.__delete(node.right, ceiling.value)
+    return node
 
   def min(self):
     if self.root == None:
@@ -114,28 +158,84 @@ class BST:
       return node
     return leftSubtreeCeiling
 
+  # good for visiting leaves first (travel all the way down left tree then right)
+  # also good for deleting/ freeing the tree without losing refs
+  # LRN 
+  def postOrder(self):
+    print("post order traversal")
+    self.__postOrder(self.root)
+
+  def __postOrder(self, node):
+    if node == None:
+      return
+    if node.left:
+      self.__postOrder(node.left)
+    if node.right:
+      self.__postOrder(node.right)
+
+  # good for visiting top nodes first (travel all the way down left tree then right)
+  # also used for copying trees
+  # NLR
+  def preOrder(self):
+    print("pre order traversal")
+    self.__preOrder(self.root)
+
+  def __preOrder(self, node):
+    if node == None:
+      return
+    print(node.value)
+    if node.left:
+      self.__preOrder(node.left)
+    if node.right:
+      self.__preOrder(node.right)
+
+  def getLeaves(self):
+    print("get leaves")
+    self.__getLeaves(self.root)
+
+  def __getLeaves(self, node):
+    if node == None:
+      return
+    if not node.left and not node.right:
+      print(node.value)
+    if node.left:
+      self.__getLeaves(node.left)
+    if node.right:
+      self.__getLeaves(node.right)
+
 tree = BST()
 tree.insert(11)
 tree.insert(2)
 tree.insert(6)
 tree.insert(55)
 tree.insert(12)
+tree.insert(4)
+tree.insert(33)
+tree.insert(7)
 tree.inOrderTraversal() 
 tree.bfs()
+# pre/ post/ in order are types of DFS
+tree.postOrder()
+tree.preOrder()
+
+tree.getLeaves()
 
 assert tree.min().value == 2
 assert tree.max().value == 55
 
 assert tree.floor(12).value == 12
 assert tree.floor(60).value == 55
-assert tree.floor(8).value == 6
+assert tree.floor(8).value == 7
 assert tree.floor(3).value == 2
 
 assert tree.ceiling(10).value == 11
 assert tree.ceiling(50).value == 55
-assert tree.ceiling(30).value == 55
+assert tree.ceiling(30).value == 33
 assert tree.ceiling(1).value == 2
 
+print("---delete 55")
+tree.delete(11)
+tree.bfs()
 
 #   11
 # 2   55 
