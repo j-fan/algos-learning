@@ -96,9 +96,9 @@ class BST:
         temp = node.left
         node = None
         return temp
-      ceiling = self.__min(node.right)
+      ceiling = self.__min(node.right) # get next largest value
       node.value = ceiling.value
-      node.right = self.__delete(node.right, ceiling.value)
+      node.right = self.__delete(node.right, ceiling.value) # delete next largest value
     return node
 
   def min(self):
