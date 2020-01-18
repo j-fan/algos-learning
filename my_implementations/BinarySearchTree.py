@@ -15,9 +15,9 @@ class BST:
     if node:
       count = 1
       if node.left:
-        count += self.size(node.left, count)
+        count += self.computeSize(node.left, count)
       if node.right:
-        count += self.size(node.right, count)
+        count += self.computeSize(node.right, count)
     return count
 
   def getCount(self, node):
