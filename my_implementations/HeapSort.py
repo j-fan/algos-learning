@@ -1,22 +1,12 @@
-# this class creates max heap
-class BinaryHeap:
+class HeapSort:
 	def __init__(self):
 		self.heap = [0]
 		self.size = 0
 
-	def swim(self, key):
-		while key // 2 > 0:
-			parentKey = key // 2
-			if self.heap[key] > self.heap[parentKey]:
-				temp = self.heap[parentKey]
-				self.heap[parentKey] = self.heap[key]
-				self.heap[key] = temp
-			key = key // 2
-
-	def insert(self, value):
+	# append without heap ordering
+	def append(self, value):
 		self.heap.append(value)
 		self.size += 1
-		self.swim(self.size)
 
 	def sink(self, key):
 		while key * 2 < self.size:
@@ -41,7 +31,11 @@ class BinaryHeap:
 		self.sink(1)
 		return maxItem
 
-	def isValid(self):
+	def convertToHeap(self):
+		for i in range(len(self.heap) // 2, 0, -1):
+			self.sink(i)
+	
+	def isValidHeap(self):
 		isValid = True
 		for i in range(1,self.size):
 			childKey = i * 2
@@ -49,30 +43,30 @@ class BinaryHeap:
 					isValid = False
 			if childKey + 1 < self.size and self.heap[childKey + 1] > self.heap[i]:
 					isValid = False	
-		return isValid		
+		return isValid	
 
 	def show(self):
 		for key in self.heap:
 			print(key, end=' ')
 		print()
 
-bheap = BinaryHeap()
-bheap.insert(2)
-bheap.insert(5)
-bheap.insert(11)
-bheap.insert(7)
-bheap.insert(66)
-bheap.insert(30)
-bheap.insert(21)
-bheap.insert(19)
-bheap.insert(44)
-bheap.show()
-assert bheap.isValid()
+	def sort(self):
+		for i in range(1, len(self.heap) - 1):
+			top = self.deleteMax()
+			print(i, top)
+			assert self.isValidHeap()
 
-bheap.heap[1] = 10
-bheap.sink(1)
-bheap.show()
-assert bheap.isValid()
-
-print("max", bheap.deleteMax())
-assert bheap.isValid()
+hsort = HeapSort()
+hsort.append(2)
+hsort.append(5)
+hsort.append(11)
+hsort.append(7)
+hsort.append(66)
+hsort.append(30)
+hsort.append(21)
+hsort.append(19)
+hsort.append(44)
+hsort.convertToHeap()
+hsort.show()
+assert hsort.isValidHeap()
+hsort.sort()
