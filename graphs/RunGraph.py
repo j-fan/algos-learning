@@ -1,5 +1,15 @@
 from GraphAM import GraphAM
 
+
+def isArraySame(arr1, arr2):
+    if not len(arr1) == len(arr2):
+        return False
+    for i in range(len(arr1)):
+        if not arr1[i] == arr2[i]:
+            return False
+    return True
+
+
 g = GraphAM(10)
 g.insertUndirected(1, 9)
 g.insertUndirected(3, 4)
@@ -12,4 +22,7 @@ g.insertUndirected(2, 7)
 g.insertUndirected(6, 4)
 
 g.show()
-g.bfs(1, 4)
+assert isArraySame(g.bfs(1, 7), g.dfs(1, 7)) == True
+assert isArraySame(g.bfs(1, 4), g.dfs(1, 4)) == True
+assert isArraySame(g.bfs(3, 1), g.dfs(3, 1)) == True
+assert isArraySame(g.bfs(8, 7), g.dfs(8, 7)) == True

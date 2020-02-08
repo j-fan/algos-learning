@@ -7,6 +7,32 @@ class GraphAM(Graph):
     self.numVertexes = numVertexes
     self.graph = [[0 for _ in range(numVertexes)] for _ in range(numVertexes)]
   
+  def dfs(self, src, dest):
+    stack = []
+    stack.insert(0, src)
+    visited = []
+    visited.append(src)
+    pathFrom = [None] * self.numVertexes
+    pathFrom[src] = -1
+
+    while len(stack) > 0:
+      current = stack.pop()
+      for neighbour in self.neighbours(current):
+        if neighbour not in visited:
+          visited.append(neighbour)
+          stack.insert(0, neighbour)
+          pathFrom[neighbour] = current
+
+    # unwind path from tree
+    current = dest
+    shortestPath = []
+    shortestPath.append(dest)
+    while not current == src:
+      current = pathFrom[current]
+      shortestPath.append(current)
+    print(shortestPath)
+    return shortestPath
+
   def bfs(self, src, dest):
     q = queue.Queue() # can also visualise it as the "frontier"
     q.put(src)
@@ -30,10 +56,11 @@ class GraphAM(Graph):
     current = dest
     shortestPath = []
     shortestPath.append(dest)
-    while not current == -1:
+    while not current == src:
       current = pathFrom[current]
       shortestPath.append(current)
     print(shortestPath)
+    return shortestPath
     
   def insertUndirected(self, x, y):
     self.graph[x][y] = 1
