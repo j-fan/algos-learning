@@ -59,7 +59,7 @@ c.insertUndirected(8, 9)
 # component 4
 c.insertUndirected(10, 10)
 c.connectedComponents()
-print(c.components)
+# print(c.components)
 
 assert c.connected(1, 0)
 assert not c.connected(3, 8)
@@ -67,3 +67,30 @@ assert c.connected(2, 5)
 assert c.connected(10, 10)
 assert c.connected(2, 0)
 assert c.connected(0, 2)
+
+cd = GraphAM(11)
+cd.insert(1, 5)
+cd.insert(1, 4)
+cd.insert(2, 4)
+cd.insert(5, 0)
+cd.insert(3, 6)
+cd.insert(8, 7)
+cd.insert(8, 9)
+cd.insert(10, 10)
+cd.insert(7, 6)
+cd.insert(5, 3)
+
+# connects 1, 2, 4, 5
+cd.insert(5, 2)
+cd.insert(4, 1)
+
+cd.stronglyConnectedComponents()
+for i in range(len(cd.components)):
+  print(f'{i}: {cd.components[i]}')
+
+assert cd.connected(1, 2)
+assert cd.connected(1, 4)
+assert cd.connected(1, 5)
+assert cd.connected(5, 4)
+assert cd.connected(2, 5)
+assert cd.connected(2, 4)

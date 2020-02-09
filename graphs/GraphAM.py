@@ -8,6 +8,7 @@ class GraphAM(Graph):
     self.numVertexes = numVertexes
     self.graph = [[0 for _ in range(numVertexes)] for _ in range(numVertexes)]
     self.components = [None] * numVertexes
+    self.reverseGraph = [[0 for _ in range(numVertexes)] for _ in range(numVertexes)]
   
   def dijkstra(self, src, dest):
     pq = queue.PriorityQueue()
@@ -28,38 +29,84 @@ class GraphAM(Graph):
           visited.append(neighbour)
           cameFrom[neighbour] = current
     
-    print(f'cost to dest {dest}: {costSoFar[dest]}')
     current = dest
     shortestPath = []
     shortestPath.insert(0, dest)
     while not current == src:
       current = cameFrom[current]
       shortestPath.insert(0, current)
-    print(shortestPath)
     return costSoFar[dest]
+
+  # strongly connected components for directed graphs
+  def stronglyConnectedComponents(self):
+    self.components = [None] * self.numVertexes
+    componentCount = 0
+    visited = []
+    for v in self.reversePostOrder(): # only this line differs!
+      if v not in visited:
+        self.connectedDfs(v, componentCount, visited)
+        componentCount += 1
+
+  # reverse post-order is step one for connected components
+  # note!! the correct order is (e.g)
+  # [ ... ][dfs traveral 3][new unseen unconnected vert][dfs traversal 2][dfs traversal 1 (from src to dest)]
+  def reversePostOrder(self):
+    start = 0
+    stack = []
+    stack.insert(start, 0)
+    unvisited = [i for i in range(self.numVertexes)]
+    unvisited.remove(start)
+    reversePostOrder = []
+
+    currentDfsOrder = []
+
+    while len(unvisited) > 0:
+      if len(stack) > 0:
+        current = stack.pop()
+        currentDfsOrder.append(current)
+      else:
+        current = unvisited.pop(0)
+        reversePostOrder = currentDfsOrder + reversePostOrder
+        currentDfsOrder = [current]
+
+      for neighbour in self.reverseNeighbours(current):
+        if neighbour in unvisited:
+          unvisited.remove(neighbour)
+          stack.insert(0, neighbour)
+
+    print(reversePostOrder)
+    return reversePostOrder      
+
+  def reverseNeighbours(self, v):
+    neighbours = []
+    for i in range(self.numVertexes):
+      if not self.reverseGraph[v][i] == 0:
+        neighbours.append(i)
+    return neighbours
 
   # do not confuse with strongly connected components for directed graphs
   def connectedComponents(self):
+    self.components = [None] * self.numVertexes
     componentCount = 0
+    visited = []
     for v in range(self.numVertexes):
-      if not self.components[v]:
-        self.connectedDfs(v, componentCount)
+      if v not in visited:
+        self.connectedDfs(v, componentCount, visited)
         componentCount += 1
         
-  def connectedDfs(self, src, count):
+  def connectedDfs(self, src, count, visited):
     stack = []
     stack.insert(0, src)
-    visited = []
     visited.append(src)
-    self.components[src] = count
 
     while len(stack) > 0:
       current = stack.pop()
+      self.components[current] = count
       for neighbour in self.neighbours(current):
         if neighbour not in visited:
           visited.append(neighbour)
           stack.insert(0, neighbour)
-          self.components[neighbour] = count
+    return visited
 
   def connected(self, x, y):
     return self.components[x] == self.components[y]
@@ -88,7 +135,6 @@ class GraphAM(Graph):
     while not current == src:
       current = pathFrom[current]
       shortestPath.insert(0, current)
-    print(shortestPath)
     return shortestPath
 
   def bfs(self, src, dest):
@@ -116,7 +162,6 @@ class GraphAM(Graph):
     while not current == src:
       current = pathFrom[current]
       shortestPath.insert(0, current)
-    print(shortestPath)
     return shortestPath
     
   def insertUndirected(self, x, y, weight=1):
@@ -129,9 +174,11 @@ class GraphAM(Graph):
 
   def insert(self, x, y, weight=1):
     self.graph[x][y] = weight
+    self.reverseGraph[y][x] = weight
 
   def remove(self, x, y):
     self.graph[x][y] = 0
+    self.reverseGraph[y][x] = 0
 
   def neighbours(self, v):
     neighbours = []
