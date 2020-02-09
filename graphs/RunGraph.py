@@ -39,9 +39,31 @@ w.insertUndirected(6, 4, 9)
 w.insertUndirected(0, 7, 3)
 w.insertUndirected(0, 8, 9)
 
-w.show()
 assert w.dijkstra(1, 8) == 9
 assert w.dijkstra(1, 0) == 16
 assert w.dijkstra(1, 4) == 4
 assert w.dijkstra(6, 0) == 22
 assert w.dijkstra(1, 1) == 0
+
+c = GraphAM(11)
+# component 1
+c.insertUndirected(1, 5)
+c.insertUndirected(1, 4)
+c.insertUndirected(2, 4)
+c.insertUndirected(5, 0)
+#component 2
+c.insertUndirected(3, 6)
+#component 3
+c.insertUndirected(8, 7)
+c.insertUndirected(8, 9)
+# component 4
+c.insertUndirected(10, 10)
+c.connectedComponents()
+print(c.components)
+
+assert c.connected(1, 0)
+assert not c.connected(3, 8)
+assert c.connected(2, 5)
+assert c.connected(10, 10)
+assert c.connected(2, 0)
+assert c.connected(0, 2)

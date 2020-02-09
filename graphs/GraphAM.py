@@ -7,6 +7,7 @@ class GraphAM(Graph):
   def __init__(self, numVertexes):
     self.numVertexes = numVertexes
     self.graph = [[0 for _ in range(numVertexes)] for _ in range(numVertexes)]
+    self.components = [None] * numVertexes
   
   def dijkstra(self, src, dest):
     pq = queue.PriorityQueue()
@@ -36,6 +37,32 @@ class GraphAM(Graph):
       shortestPath.insert(0, current)
     print(shortestPath)
     return costSoFar[dest]
+
+  # do not confuse with strongly connected components for directed graphs
+  def connectedComponents(self):
+    componentCount = 0
+    for v in range(self.numVertexes):
+      if not self.components[v]:
+        self.connectedDfs(v, componentCount)
+        componentCount += 1
+        
+  def connectedDfs(self, src, count):
+    stack = []
+    stack.insert(0, src)
+    visited = []
+    visited.append(src)
+    self.components[src] = count
+
+    while len(stack) > 0:
+      current = stack.pop()
+      for neighbour in self.neighbours(current):
+        if neighbour not in visited:
+          visited.append(neighbour)
+          stack.insert(0, neighbour)
+          self.components[neighbour] = count
+
+  def connected(self, x, y):
+    return self.components[x] == self.components[y]
 
   def dfs(self, src, dest):
     stack = []

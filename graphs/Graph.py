@@ -17,5 +17,7 @@ class Graph:
     pass
   def aStar(self, src, dest):
     pass
+  def connectedComponents(self):
+    pass
   def show(self):
     pass
