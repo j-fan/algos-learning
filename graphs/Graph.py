@@ -1,7 +1,7 @@
 class Graph:
-  def insert(self, x, y):
+  def insert(self, x, y, weight):
     pass
-  def insertUndirected(self, x, y):
+  def insertUndirected(self, x, y, weight):
     pass
   def remove(self, x, y):
     pass
