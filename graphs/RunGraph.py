@@ -94,3 +94,5 @@ assert cd.connected(1, 5)
 assert cd.connected(5, 4)
 assert cd.connected(2, 5)
 assert cd.connected(2, 4)
+
+print("kruskal:",cd.kruskal())

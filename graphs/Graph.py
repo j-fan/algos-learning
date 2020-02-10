@@ -15,7 +15,7 @@ class Graph:
     pass
   def dijkstra(self, src, dest):
     pass
-  def aStar(self, src, dest):
+  def kruskal(self):
     pass
   def connectedComponents(self):
     pass

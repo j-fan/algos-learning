@@ -1,5 +1,6 @@
 # graph as adjacency matrix
 from Graph import Graph
+from QuickUnionUF import QuickUnionUF
 import queue
 import sys
 
@@ -10,6 +11,33 @@ class GraphAM(Graph):
     self.components = [None] * numVertexes
     self.reverseGraph = [[0 for _ in range(numVertexes)] for _ in range(numVertexes)]
   
+  def kruskal(self):
+    pq = queue.PriorityQueue()
+    for edge in self.edges():
+      u = edge[0]
+      v = edge[1]
+      pq.put((self.graph[u][v], edge))
+
+    unionFind = QuickUnionUF(self.numVertexes)
+    mst = []
+
+    while not pq.empty() and len(mst) < self.numVertexes - 1:
+      current = pq.get()[1]
+      if not unionFind.connected(current[0], current[1]):
+        unionFind.union(current[0], current[1])
+        mst.append(current)
+
+    return mst
+
+  # other representations will have better edge access e.g adjacency list, edge list
+  def edges(self):
+    edges = []
+    for x in range(self.numVertexes):
+      for y in range(self.numVertexes):
+        if self.graph[x][y] > 0:
+          edges.append((x, y))
+    return edges
+
   def dijkstra(self, src, dest):
     pq = queue.PriorityQueue()
     pq.put((0, src))
