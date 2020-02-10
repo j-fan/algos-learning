@@ -13,8 +13,8 @@ class GraphAM(Graph):
   def dijkstra(self, src, dest):
     pq = queue.PriorityQueue()
     pq.put((0, src))
-    visited = []
-    visited.append(src)
+    visited = set()
+    visited.add(src)
     costSoFar = [sys.maxsize] * self.numVertexes
     costSoFar[src] = 0
     cameFrom = [None] * self.numVertexes
@@ -26,7 +26,7 @@ class GraphAM(Graph):
         if neighbour not in visited or tentativeCost < costSoFar[neighbour]:
           costSoFar[neighbour] = tentativeCost
           pq.put((tentativeCost, neighbour))
-          visited.append(neighbour)
+          visited.add(neighbour)
           cameFrom[neighbour] = current
     
     current = dest
@@ -41,7 +41,7 @@ class GraphAM(Graph):
   def stronglyConnectedComponents(self):
     self.components = [None] * self.numVertexes
     componentCount = 0
-    visited = []
+    visited = set()
     for v in self.reversePostOrder(): # only this line differs!
       if v not in visited:
         self.connectedDfs(v, componentCount, visited)
@@ -88,7 +88,7 @@ class GraphAM(Graph):
   def connectedComponents(self):
     self.components = [None] * self.numVertexes
     componentCount = 0
-    visited = []
+    visited = set()
     for v in range(self.numVertexes):
       if v not in visited:
         self.connectedDfs(v, componentCount, visited)
@@ -97,14 +97,14 @@ class GraphAM(Graph):
   def connectedDfs(self, src, count, visited):
     stack = []
     stack.insert(0, src)
-    visited.append(src)
+    visited.add(src)
 
     while len(stack) > 0:
       current = stack.pop()
       self.components[current] = count
       for neighbour in self.neighbours(current):
         if neighbour not in visited:
-          visited.append(neighbour)
+          visited.add(neighbour)
           stack.insert(0, neighbour)
     return visited
 
@@ -114,8 +114,8 @@ class GraphAM(Graph):
   def dfs(self, src, dest):
     stack = []
     stack.insert(0, src)
-    visited = []
-    visited.append(src)
+    visited = set()
+    visited.add(src)
     pathFrom = [None] * self.numVertexes
 
     while len(stack) > 0:
@@ -124,7 +124,7 @@ class GraphAM(Graph):
         break
       for neighbour in self.neighbours(current):
         if neighbour not in visited:
-          visited.append(neighbour)
+          visited.add(neighbour)
           stack.insert(0, neighbour)
           pathFrom[neighbour] = current
 
@@ -140,8 +140,8 @@ class GraphAM(Graph):
   def bfs(self, src, dest):
     q = queue.Queue() # can also visualise it as the "frontier"
     q.put(src)
-    visited = []
-    visited.append(src)
+    visited = set()
+    visited.add(src)
     pathFrom = [None] * self.numVertexes
 
     # do BFS until dest is found
@@ -152,7 +152,7 @@ class GraphAM(Graph):
       for neighbour in self.neighbours(current):
         if neighbour not in visited:
           q.put(neighbour)
-          visited.append(neighbour)
+          visited.add(neighbour)
           pathFrom[neighbour] = current
 
     # unwind the path-from tree to find shortest path to dest
